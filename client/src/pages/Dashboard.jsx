@@ -120,7 +120,13 @@ function Dashboard() {
               </div>
 
               {/* Connect Gmail */}
-              <button className="bg-white text-black px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
+              <button
+                onClick={() => {
+                  window.location.href =
+                      "http://localhost:5000/auth/google";
+                }}
+                className="bg-white text-black px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
+              >
                 Connect Gmail
               </button>
 
