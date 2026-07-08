@@ -1,9 +1,6 @@
 import { Mail } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex">
       {/* Left Panel */}
@@ -52,14 +49,16 @@ function Login() {
             </div>
 
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => {
+                window.location.href = "http://localhost:5000/auth/google";
+              }}
               className="w-full bg-white text-black py-3 rounded-lg font-medium hover:opacity-90 transition"
             >
               Continue with Gmail
             </button>
 
             <p className="text-zinc-500 text-sm mt-6 text-center">
-              Gmail OAuth will be connected in the next step.
+              Securely sign in with your Google account. We do not store your password or any sensitive information.
             </p>
           </div>
         </div>

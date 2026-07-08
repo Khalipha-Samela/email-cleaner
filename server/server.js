@@ -36,19 +36,6 @@ app.use("/auth", authRoutes);
 
 app.use("/api/gmail", gmailRoutes);
 
-app.get("/api/user", (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({
-      authenticated: false,
-    });
-  }
-
-  res.json({
-    authenticated: true,
-    user: req.user,
-  });
-});
-
 app.get("/", (req, res) => {
   res.json({
     success: true,
