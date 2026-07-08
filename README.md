@@ -97,7 +97,7 @@ email-cleaner/
 | GET    | `/auth/google`          | Start Google OAuth login |
 | GET    | `/auth/google/callback` | Google OAuth callback    |
 | GET    | `/auth/user`            | Get authenticated user   |
-| GET    | `/auth/logout`          | Log out user             |
+| POST    | `/auth/logout`          | Log out user             |
 
 ### Gmail
 
@@ -114,9 +114,13 @@ email-cleaner/
 * ✅ Tailwind CSS UI
 * ✅ Google OAuth authentication
 * ✅ Gmail API integration
+* ✅ Passport.js session management
 * ✅ Protected routes
-* ✅ User session management
+* ✅ Login page
+* ✅ Dashboard
 * ✅ Live Gmail inbox retrieval
+* ✅ Email service architecture
+* ✅ Secure logout endpoint
 
 ### In Progress
 
@@ -124,15 +128,17 @@ email-cleaner/
 * 🚧 Inbox improvements
 * 🚧 Search and filtering
 
-### Planned
+### Upcoming Features
 
-* AI-powered email classification
-* Bulk archive
-* Bulk delete
-* Smart unsubscribe detection
+* AI-powered email categorization
+* Newsletter detection
+* Promotion detection
+* One-click inbox cleanup
+* Bulk archive and delete
 * Email analytics
-* Storage insights
-* Automated cleanup rules
+* Unsubscribe assistant
+* Gmail storage insights
+* Smart cleanup rules
 
 ## Getting Started
 
@@ -183,6 +189,7 @@ npm run dev
 * [x] Google OAuth login
 * [x] Gmail API integration
 * [x] Protected routes
+* [x] Secure logout
 * [x] Fetch live Gmail emails
 * [ ] Email categorization engine
 * [ ] Smart cleanup recommendations
@@ -194,6 +201,10 @@ npm run dev
 
 🚧 Active Development
 
-**Current Version:** v0.4
+**Current Version:** v0.5
 
 The next milestone is transforming the dashboard into a complete Gmail inbox experience with intelligent email categorization and bulk cleanup tools.
+
+## License
+
+This project is licensed under the MIT License.
