@@ -5,253 +5,190 @@ import {
   BarChart3,
   Settings,
   Search,
-  Mail,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+import useEmails from "../hooks/useEmails";
+import EmailList from "../components/email/EmailList";
 
 function Dashboard() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate("/");
-  };
+  const { emails, loading, error } = useEmails();
 
   const stats = [
     {
       title: "Total Emails",
-      value: "3,421",
+      value: emails.length,
     },
     {
-      title: "Newsletters",
-      value: "198",
+      title: "Unread",
+      value: emails.filter((email) =>
+        email.labelIds?.includes("UNREAD")
+      ).length,
     },
     {
-      title: "Promotions",
-      value: "412",
+      title: "Important",
+      value: emails.filter((email) =>
+        email.labelIds?.includes("IMPORTANT")
+      ).length,
     },
     {
-      title: "Storage Saved",
-      value: "1.2 GB",
+      title: "Inbox",
+      value: emails.filter((email) =>
+        email.labelIds?.includes("INBOX")
+      ).length,
     },
   ];
 
-  const emails = [
-    {
-      sender: "LinkedIn",
-      subject: "New jobs matching your profile",
-      type: "Promotion",
-    },
-    {
-      sender: "Takealot",
-      subject: "Weekend deals are live",
-      type: "Newsletter",
-    },
-    {
-      sender: "GitHub",
-      subject: "Pull request awaiting review",
-      type: "Important",
-    },
-  ];
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/logout",
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 h-screen border-r border-zinc-800 bg-zinc-950 sticky top-0">
-          <div className="p-6 border-b border-zinc-800">
-            <h1 className="text-lg font-semibold">
-              Email Cleaner
-            </h1>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex">
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-zinc-800 flex flex-col">
+        <div className="h-16 flex items-center px-6 border-b border-zinc-800">
+          <h1 className="text-lg font-semibold">
+            Email Cleaner
+          </h1>
+        </div>
 
-            <p className="text-sm text-zinc-500 mt-1">
-              Inbox management
-            </p>
+        <nav className="flex-1 p-3 space-y-1">
+          <SidebarItem
+            icon={<LayoutDashboard size={18} />}
+            text="Dashboard"
+            active
+          />
+
+          <SidebarItem
+            icon={<Inbox size={18} />}
+            text="Inbox"
+          />
+
+          <SidebarItem
+            icon={<Filter size={18} />}
+            text="Cleanup Rules"
+          />
+
+          <SidebarItem
+            icon={<BarChart3 size={18} />}
+            text="Analytics"
+          />
+
+          <SidebarItem
+            icon={<Settings size={18} />}
+            text="Settings"
+          />
+        </nav>
+
+        <div className="border-t border-zinc-800 p-4">
+          <button
+            onClick={handleLogout}
+            className="w-full rounded-lg border border-zinc-700 px-4 py-2 text-sm hover:bg-zinc-900 transition"
+          >
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="flex-1 overflow-auto">
+        {/* Header */}
+        <header className="h-16 border-b border-zinc-800 flex items-center justify-between px-8">
+          <div>
+            <h2 className="text-xl font-semibold">
+              Inbox Overview
+            </h2>
           </div>
 
-          <nav className="p-3 space-y-1">
-            <SidebarItem
-              icon={<LayoutDashboard size={18} />}
-              text="Dashboard"
-              active
-            />
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 border border-zinc-800 rounded-lg px-3 py-2 bg-zinc-900">
+              <Search
+                size={16}
+                className="text-zinc-500"
+              />
 
-            <SidebarItem
-              icon={<Inbox size={18} />}
-              text="Inbox"
-            />
-
-            <SidebarItem
-              icon={<Filter size={18} />}
-              text="Cleanup Rules"
-            />
-
-            <SidebarItem
-              icon={<BarChart3 size={18} />}
-              text="Analytics"
-            />
-
-            <SidebarItem
-              icon={<Settings size={18} />}
-              text="Settings"
-            />
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1">
-          {/* Top Navigation */}
-          <header className="h-16 border-b border-zinc-800 px-8 flex items-center justify-between">
-            <div>
-              <h2 className="font-medium">
-                Inbox Overview
-              </h2>
+              <input
+                placeholder="Search emails..."
+                className="bg-transparent outline-none text-sm w-64 placeholder:text-zinc-500"
+              />
             </div>
 
-            <div className="flex items-center gap-4">
-              {/* Search */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-900">
-                <Search size={16} className="text-zinc-500" />
+            <button className="bg-white text-black px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90">
+              Sync Inbox
+            </button>
 
-                <input
-                  type="text"
-                  placeholder="Search emails..."
-                  className="bg-transparent outline-none text-sm placeholder:text-zinc-500"
-                />
-              </div>
+            <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center font-medium">
+              KS
+            </div>
+          </div>
+        </header>
 
-              {/* Connect Gmail */}
-              <button
-                onClick={() => {
-                  window.location.href =
-                      "http://localhost:5000/auth/google";
-                }}
-                className="bg-white text-black px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
+        {/* Content */}
+        <div className="p-8">
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+            {stats.map((stat) => (
+              <div
+                key={stat.title}
+                className="rounded-xl border border-zinc-800 bg-zinc-900 p-5"
               >
-                Connect Gmail
-              </button>
+                <p className="text-sm text-zinc-500">
+                  {stat.title}
+                </p>
 
-              {/* Avatar */}
-              <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-sm font-medium">
-                KS
+                <h3 className="text-3xl font-semibold mt-2">
+                  {loading ? "--" : stat.value}
+                </h3>
               </div>
+            ))}
+          </div>
 
-              {/* Logout */}
-              <button
-                onClick={handleLogout}
-                className="text-sm text-zinc-400 hover:text-white transition"
-              >
-                Logout
-              </button>
-            </div>
-          </header>
-
-          {/* Content */}
-          <div className="p-8">
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-              {stats.map((item) => (
-                <div
-                  key={item.title}
-                  className="border border-zinc-800 bg-zinc-900 rounded-xl p-5"
-                >
-                  <p className="text-sm text-zinc-400">
-                    {item.title}
-                  </p>
-
-                  <h3 className="text-3xl font-semibold mt-2">
-                    {item.value}
-                  </h3>
-                </div>
-              ))}
-            </div>
-
-            {/* Cleanup Opportunities */}
-            <div className="mt-8 border border-zinc-800 rounded-xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900">
-                <h3 className="font-medium">
-                  Cleanup Opportunities
+          {/* Inbox */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-xl font-semibold">
+                  Inbox
                 </h3>
 
-                <p className="text-sm text-zinc-500 mt-1">
-                  Emails identified for review.
+                <p className="text-zinc-500 text-sm mt-1">
+                  Showing your latest Gmail messages.
                 </p>
               </div>
 
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-zinc-800 text-left text-sm text-zinc-500">
-                    <th className="px-6 py-4 font-medium">
-                      Sender
-                    </th>
-
-                    <th className="px-6 py-4 font-medium">
-                      Subject
-                    </th>
-
-                    <th className="px-6 py-4 font-medium">
-                      Type
-                    </th>
-
-                    <th className="px-6 py-4 font-medium">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {emails.map((email, index) => (
-                    <tr
-                      key={index}
-                      className="border-b border-zinc-900 hover:bg-zinc-900 transition"
-                    >
-                      <td className="px-6 py-4">
-                        {email.sender}
-                      </td>
-
-                      <td className="px-6 py-4 text-zinc-400">
-                        {email.subject}
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <span className="text-sm border border-zinc-700 px-2 py-1 rounded-md">
-                          {email.type}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <button className="border border-zinc-700 px-3 py-1.5 rounded-lg text-sm hover:bg-zinc-800 transition">
-                          Review
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Empty State */}
-            <div className="mt-8 border border-zinc-800 rounded-xl p-12 text-center">
-              <div className="w-12 h-12 mx-auto rounded-xl bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                <Mail size={22} />
-              </div>
-
-              <h3 className="text-lg font-medium mt-5">
-                Connect your inbox
-              </h3>
-
-              <p className="text-zinc-400 mt-2 max-w-md mx-auto">
-                Connect Gmail to start analyzing newsletters,
-                promotions, receipts and other unnecessary
-                emails.
-              </p>
-
-              <button className="mt-6 bg-white text-black px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition">
-                Connect Gmail
+              <button
+                className="border border-zinc-700 rounded-lg px-4 py-2 text-sm hover:bg-zinc-900"
+                onClick={() => window.location.reload()}
+              >
+                Refresh
               </button>
             </div>
-          </div>
-        </main>
-      </div>
+
+            <EmailList
+              emails={emails}
+              loading={loading}
+              error={error}
+            />
+          </section>
+        </div>
+      </main>
     </div>
   );
 }
@@ -266,9 +203,10 @@ function SidebarItem({ icon, text, active = false }) {
       }`}
     >
       {icon}
-      {text}
+      <span>{text}</span>
     </button>
   );
 }
 
 export default Dashboard;
+

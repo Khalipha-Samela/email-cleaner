@@ -8,6 +8,8 @@ const passport = require("./config/passport");
 
 const authRoutes = require("./routes/authRoutes");
 
+const gmailRoutes = require("./routes/gmailRoutes");
+
 const app = express();
 
 app.use(
@@ -31,6 +33,21 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRoutes);
+
+app.use("/api/gmail", gmailRoutes);
+
+app.get("/api/user", (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({
+      authenticated: false,
+    });
+  }
+
+  res.json({
+    authenticated: true,
+    user: req.user,
+  });
+});
 
 app.get("/", (req, res) => {
   res.json({
